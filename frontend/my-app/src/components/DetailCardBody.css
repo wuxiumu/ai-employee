@@ -1,0 +1,62 @@
+/* DetailCardBody 特定样式 */
+
+/* 头部布局 */
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.detail-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 主体布局 - 两栏 */
+.detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+}
+
+/* 底部布局 */
+.detail-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-actions-left {
+  display: flex;
+  gap: 8px;
+}
+
+.detail-chat-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .detail-body {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .detail-footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .detail-actions-left {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .detail-chat-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,340 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'JetBrains Mono',monospace}
+.office{background:#f0ede8;border-radius:16px;padding:28px 24px 24px;position:relative}
+.office-title{font-size:10px;letter-spacing:.14em;color:#888780;text-transform:uppercase;margin-bottom:22px;text-align:center}
+.floor{display:flex;gap:16px;align-items:flex-end;justify-content:center;flex-wrap:nowrap}
+.desk-unit{display:flex;flex-direction:column;align-items:center;width:260px;cursor:pointer}
+.desk-unit:hover .person-wrap{transform:translateY(-4px)}
+.person-wrap{transition:transform .2s ease}
+
+.bubble{
+  background:#fff;border:1.5px solid #d3d1c7;
+  border-radius:12px 12px 12px 4px;
+  padding:10px 12px;font-size:10px;line-height:1.65;
+  color:#444441;width:220px;align-self:flex-start;
+  margin-bottom:8px;
+}
+.bubble.right{border-radius:12px 12px 4px 12px;align-self:flex-end}
+.b-name{font-size:11px;font-weight:600;color:#2C2C2A;margin-bottom:4px}
+.b-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:3px}
+.b-label{color:#888780;flex-shrink:0}
+.b-bar-wrap{flex:1;height:4px;background:#e8e5e0;border-radius:2px;overflow:hidden}
+.b-bar{height:100%;border-radius:2px;transition:.3s}
+.b-val{color:#2C2C2A;font-weight:500;min-width:32px;text-align:right;font-size:10px}
+.b-ok{color:#3B6D11}
+.b-warn{color:#854F0B}
+.b-red{color:#A32D2D}
+
+.person-area{display:flex;flex-direction:column;align-items:center}
+
+.desk{
+  width:230px;height:56px;
+  background:#cac7c2;border-radius:8px 8px 4px 4px;
+  border:1.5px solid #b4b2a9;
+  display:flex;align-items:center;gap:8px;
+  padding:0 12px;margin-top:-2px;
+}
+.desk-monitor{width:36px;height:28px;background:#2C2C2A;border-radius:4px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.desk-monitor::after{content:'';width:10px;height:3px;background:#444441;border-radius:2px;position:absolute;bottom:-5px;left:50%;transform:translateX(-50%)}
+.monitor-screen{width:26px;height:18px;border-radius:2px;font-size:7px;font-family:monospace;display:flex;flex-direction:column;justify-content:center;padding:2px 3px;line-height:1.3;overflow:hidden}
+.ms-green{color:#3dd68c}
+.ms-red{color:#f05060}
+.ms-gray{color:#888780}
+
+.desk-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.desk-tag{font-size:9px;background:#f0ede8;border:1px solid #d3d1c7;border-radius:3px;padding:2px 6px;color:#5F5E5A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}
+.desk-tag .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.nameplate{
+  width:140px;background:#2C2C2A;border-radius:4px;
+  padding:4px 10px;text-align:center;
+  font-size:9px;letter-spacing:.08em;color:#e8e5e0;margin-top:-1px;
+}
+.desk-leg{width:190px;height:10px;background:#b4b2a9;border-radius:0 0 4px 4px}
+.uptime-tag{font-size:9px;color:#888780;margin-top:5px;letter-spacing:.04em}
+
+.status-badge{font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:99px;font-weight:600;margin-top:5px}
+.badge-online{background:#EAF3DE;color:#3B6D11;border:1px solid #97C459}
+.badge-warn{background:#FAEEDA;color:#854F0B;border:1px solid #EF9F27}
+.badge-offline{background:#FCEBEB;color:#A32D2D;border:1px solid #F09595}
+
+.divider{width:1px;background:#d3d1c7;height:130px;align-self:center;flex-shrink:0}
+
+/* ── Modal overlay (normal flow faux-viewport) ── */
+.modal-layer{
+  min-height:0;overflow:hidden;
+  transition:min-height .25s ease, padding .25s ease;
+}
+.modal-layer.open{min-height:340px;padding:16px 0 4px}
+.modal-card{
+  background:#fff;border:1px solid #d3d1c7;border-radius:14px;
+  max-width:500px;margin:0 auto;overflow:hidden;
+  transform:translateY(10px);opacity:0;
+  transition:transform .2s ease, opacity .2s ease;
+  pointer-events:none;
+}
+.modal-layer.open .modal-card{transform:translateY(0);opacity:1;pointer-events:auto}
+.modal-head{
+  padding:14px 18px;border-bottom:1px solid #e8e5e0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head-left{display:flex;align-items:center;gap:10px}
+.modal-avatar{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.modal-title{font-size:13px;font-weight:600;color:#2C2C2A}
+.modal-sub{font-size:10px;color:#888780;margin-top:1px}
+.modal-close{width:26px;height:26px;border-radius:6px;border:1px solid #d3d1c7;background:#f0ede8;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:#5F5E5A;flex-shrink:0}
+.modal-close:hover{background:#e8e5e0}
+.modal-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.m-section{display:flex;flex-direction:column;gap:7px}
+.m-section-title{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#888780;padding-bottom:4px;border-bottom:1px solid #e8e5e0}
+.m-row{display:flex;align-items:center;justify-content:space-between;font-size:11px}
+.m-key{color:#888780}
+.m-val{color:#2C2C2A;font-weight:500;text-align:right}
+.m-val.ok{color:#3B6D11}
+.m-val.warn{color:#854F0B}
+.m-val.err{color:#A32D2D}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:11px}
+.bar-label{color:#888780;width:36px;flex-shrink:0}
+.bar-track{flex:1;height:5px;background:#e8e5e0;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:.5s ease}
+.bar-pct{color:#2C2C2A;font-weight:500;min-width:30px;text-align:right;font-size:10px}
+.modal-foot{padding:10px 18px 14px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #e8e5e0}
+.m-btn{font-size:10px;padding:5px 12px;border-radius:6px;border:1px solid #d3d1c7;background:#f0ede8;cursor:pointer;color:#444441;font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+.m-btn:hover{background:#e8e5e0}
+.m-btn.primary{background:#185FA5;color:#fff;border-color:transparent}
+.m-btn.primary:hover{opacity:.88}
+</style>
+
+<div class="office">
+  <div class="office-title">Server Office · 员工总览</div>
+
+  <div class="floor">
+
+    <!-- ── Server 1: Web-Alpha online ── -->
+    <div class="desk-unit" onclick="openModal(0)" title="点击查看详情">
+      <div class="bubble">
+        <div class="b-name">Web-Alpha</div>
+        <div class="b-row"><span class="b-label">CPU</span><div class="b-bar-wrap"><div class="b-bar" style="width:23%;background:#3B6D11"></div></div><span class="b-val b-ok">23%</span></div>
+        <div class="b-row"><span class="b-label">内存</span><div class="b-bar-wrap"><div class="b-bar" style="width:61%;background:#3B6D11"></div></div><span class="b-val b-ok">61%</span></div>
+        <div class="b-row"><span class="b-label">磁盘</span><div class="b-bar-wrap"><div class="b-bar" style="width:44%;background:#3B6D11"></div></div><span class="b-val b-ok">44%</span></div>
+        <div style="margin-top:5px;font-size:10px;color:#3B6D11">4 域名 · SSL 全绿 ✓</div>
+      </div>
+
+      <div class="person-area">
+        <div class="person-wrap">
+          <svg width="54" height="90" viewBox="0 0 54 90" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="27" cy="18" rx="13" ry="14" fill="#f5c5a3"/>
+            <path d="M14 14 Q14 4 27 4 Q40 4 40 14 Q38 8 27 8 Q16 8 14 14Z" fill="#2C2C2A"/>
+            <ellipse cx="22" cy="17" rx="2" ry="2.2" fill="#2C2C2A"/>
+            <ellipse cx="32" cy="17" rx="2" ry="2.2" fill="#2C2C2A"/>
+            <ellipse cx="22.6" cy="16.5" rx=".8" ry=".8" fill="#fff"/>
+            <ellipse cx="32.6" cy="16.5" rx=".8" ry=".8" fill="#fff"/>
+            <path d="M21 23 Q27 27 33 23" fill="none" stroke="#b97a56" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="24" y="30" width="6" height="6" fill="#f5c5a3"/>
+            <path d="M12 36 Q12 32 27 32 Q42 32 42 36 L44 70 Q44 72 42 72 L12 72 Q10 72 10 70 Z" fill="#2C2C2A"/>
+            <path d="M22 32 L27 40 L32 32 Q27 35 22 32Z" fill="#fff"/>
+            <path d="M25 36 L27 44 L29 36 L27 34Z" fill="#185FA5"/>
+            <path d="M12 38 Q4 46 6 58" fill="none" stroke="#2C2C2A" stroke-width="7" stroke-linecap="round"/>
+            <path d="M42 38 Q50 44 48 56" fill="none" stroke="#2C2C2A" stroke-width="7" stroke-linecap="round"/>
+            <ellipse cx="6" cy="59" rx="4" ry="3.5" fill="#f5c5a3"/>
+            <ellipse cx="48" cy="57" rx="4" ry="3.5" fill="#f5c5a3"/>
+            <rect x="16" y="72" width="9" height="16" rx="3" fill="#444441"/>
+            <rect x="29" y="72" width="9" height="16" rx="3" fill="#444441"/>
+            <ellipse cx="20" cy="89" rx="7" ry="3" fill="#2C2C2A"/>
+            <ellipse cx="34" cy="89" rx="7" ry="3" fill="#2C2C2A"/>
+            <rect x="-1" y="55" width="9" height="10" rx="2" fill="#fff" stroke="#d3d1c7" stroke-width="1"/>
+            <rect x="0" y="57" width="7" height="3" rx="1" fill="#8B6347" opacity=".7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="desk">
+        <div class="desk-monitor">
+          <div class="monitor-screen ms-green">$ ok<br>▮</div>
+        </div>
+        <div class="desk-info">
+          <div class="desk-tag"><span class="dot" style="background:#3B6D11"></span>nginx 1.24</div>
+          <div class="desk-tag">PHP 8.2 · fpm</div>
+        </div>
+      </div>
+      <div class="nameplate">WEB-ALPHA · HKG-01</div>
+      <div class="desk-leg"></div>
+      <div class="uptime-tag">↑ 在线 47 天 12h</div>
+      <div class="status-badge badge-online">● 在线</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── Server 2: Shop-Gamma warn ── -->
+    <div class="desk-unit" onclick="openModal(1)" title="点击查看详情">
+      <div class="bubble right">
+        <div class="b-name">Shop-Gamma</div>
+        <div class="b-row"><span class="b-label">CPU</span><div class="b-bar-wrap"><div class="b-bar" style="width:78%;background:#854F0B"></div></div><span class="b-val b-warn">78%</span></div>
+        <div class="b-row"><span class="b-label">内存</span><div class="b-bar-wrap"><div class="b-bar" style="width:88%;background:#A32D2D"></div></div><span class="b-val b-red">88%</span></div>
+        <div class="b-row"><span class="b-label">磁盘</span><div class="b-bar-wrap"><div class="b-bar" style="width:91%;background:#A32D2D"></div></div><span class="b-val b-red">91%</span></div>
+        <div style="margin-top:5px;font-size:10px;color:#854F0B">⚠ 2 域名 · SSL 剩 8 天</div>
+      </div>
+
+      <div class="person-area">
+        <div class="person-wrap">
+          <svg width="54" height="90" viewBox="0 0 54 90" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="27" cy="18" rx="13" ry="14" fill="#f5c5a3"/>
+            <path d="M14 14 Q14 3 27 3 Q40 3 40 14 Q39 7 27 7 Q15 7 14 14Z" fill="#854F0B"/>
+            <path d="M38 6 Q43 8 41 13" fill="none" stroke="#854F0B" stroke-width="3" stroke-linecap="round"/>
+            <path d="M16 6 Q11 9 13 14" fill="none" stroke="#854F0B" stroke-width="2.5" stroke-linecap="round"/>
+            <ellipse cx="22" cy="17" rx="2" ry="2.2" fill="#2C2C2A"/>
+            <ellipse cx="32" cy="17" rx="2" ry="2.2" fill="#2C2C2A"/>
+            <path d="M20 12 Q22 10 24 12" fill="none" stroke="#2C2C2A" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M30 12 Q32 10 34 12" fill="none" stroke="#2C2C2A" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M22 24 Q27 21 32 24" fill="none" stroke="#b97a56" stroke-width="1.4" stroke-linecap="round"/>
+            <ellipse cx="38" cy="14" rx="2.5" ry="3.5" fill="#85B7EB" opacity=".8"/>
+            <rect x="24" y="30" width="6" height="6" fill="#f5c5a3"/>
+            <path d="M12 36 Q12 32 27 32 Q42 32 42 36 L44 70 Q44 72 42 72 L12 72 Q10 72 10 70 Z" fill="#5F5E5A"/>
+            <path d="M22 32 L27 41 L32 32 Q27 36 22 32Z" fill="#fff"/>
+            <path d="M24 35 L26 44 L29 35 L27 33Z" fill="#BA7517" transform="rotate(5,27,38)"/>
+            <path d="M12 38 Q3 42 5 54" fill="none" stroke="#5F5E5A" stroke-width="7" stroke-linecap="round"/>
+            <path d="M42 38 Q50 32 46 28" fill="none" stroke="#5F5E5A" stroke-width="7" stroke-linecap="round"/>
+            <ellipse cx="5" cy="55" rx="4" ry="3.5" fill="#f5c5a3"/>
+            <ellipse cx="46" cy="27" rx="4" ry="3.5" fill="#f5c5a3"/>
+            <rect x="16" y="72" width="9" height="16" rx="3" fill="#888780"/>
+            <rect x="29" y="72" width="9" height="16" rx="3" fill="#888780"/>
+            <ellipse cx="20" cy="89" rx="7" ry="3" fill="#2C2C2A"/>
+            <ellipse cx="34" cy="89" rx="7" ry="3" fill="#2C2C2A"/>
+            <rect x="-2" y="51" width="11" height="13" rx="2" fill="#fff" stroke="#EF9F27" stroke-width="1.5"/>
+            <rect x="0" y="54" width="7" height="1.5" rx="1" fill="#EF9F27" opacity=".7"/>
+            <rect x="0" y="57" width="5" height="1.5" rx="1" fill="#EF9F27" opacity=".5"/>
+            <rect x="0" y="60" width="6" height="1.5" rx="1" fill="#EF9F27" opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="desk">
+        <div class="desk-monitor">
+          <div class="monitor-screen ms-red">WARN<br>SSL!</div>
+        </div>
+        <div class="desk-info">
+          <div class="desk-tag"><span class="dot" style="background:#854F0B"></span>apache 2.4</div>
+          <div class="desk-tag">PHP 7.4 · 待升级</div>
+        </div>
+      </div>
+      <div class="nameplate">SHOP-GAMMA · BJS-03</div>
+      <div class="desk-leg"></div>
+      <div class="uptime-tag">↑ 在线 3 天 2h (重启后)</div>
+      <div class="status-badge badge-warn">⚠ 预警</div>
+    </div>
+
+  </div>
+
+  <!-- ── Modal layer (normal-flow, not fixed) ── -->
+  <div class="modal-layer" id="modalLayer">
+    <div class="modal-card" id="modalCard">
+      <div class="modal-head">
+        <div class="modal-head-left">
+          <div class="modal-avatar" id="mAvatar"></div>
+          <div>
+            <div class="modal-title" id="mTitle"></div>
+            <div class="modal-sub" id="mSub"></div>
+          </div>
+        </div>
+        <div class="modal-close" onclick="closeModal()">✕</div>
+      </div>
+      <div class="modal-body" id="mBody"></div>
+      <div class="modal-foot">
+        <button class="m-btn" onclick="closeModal()">关闭</button>
+        <button class="m-btn primary" onclick="sendPrompt('帮我分析这台服务器的问题并给出优化建议：' + currentServer)">↗ 分析问题</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SERVERS = [
+  {
+    name:'Web-Alpha', ip:'103.12.1.10', loc:'香港 HKG-01',
+    os:'Ubuntu 22.04 LTS', php:'8.2', web:'nginx 1.24',
+    cpu_pct:23, ram_pct:61, disk_pct:44,
+    ram_used:'2.4GB', ram_total:'4GB',
+    disk_used:'44GB', disk_total:'100GB',
+    uptime:'47天 12小时', status:'online',
+    domains:4, ssl_min:87, ssl_warn:false,
+    ssh_port:'22', deploy:'2024-12-01',
+    notes:'主站前端，运行稳定',
+    avatar:'🟢', avatarBg:'#EAF3DE', avatarColor:'#3B6D11',
+  },
+  {
+    name:'Shop-Gamma', ip:'47.93.22.5', loc:'北京 BJS-03',
+    os:'CentOS 7 (EOL)', php:'7.4', web:'Apache 2.4',
+    cpu_pct:78, ram_pct:88, disk_pct:91,
+    ram_used:'1.76GB', ram_total:'2GB',
+    disk_used:'45.5GB', disk_total:'50GB',
+    uptime:'3天 2小时', status:'warn',
+    domains:2, ssl_min:8, ssl_warn:true,
+    ssh_port:'22', deploy:'2024-11-28',
+    notes:'电商系统，PHP/OS 需升级，SSL 即将过期',
+    avatar:'⚠', avatarBg:'#FAEEDA', avatarColor:'#854F0B',
+  },
+];
+
+let currentServer = '';
+let open = false;
+
+function barColor(pct) {
+  if (pct >= 85) return '#A32D2D';
+  if (pct >= 70) return '#854F0B';
+  return '#3B6D11';
+}
+function valClass(pct) {
+  if (pct >= 85) return 'err';
+  if (pct >= 70) return 'warn';
+  return 'ok';
+}
+
+function openModal(idx) {
+  const s = SERVERS[idx];
+  currentServer = s.name + ' IP:' + s.ip + ' PHP:' + s.php + ' OS:' + s.os + ' CPU:' + s.cpu_pct + '% 内存:' + s.ram_pct + '% 磁盘:' + s.disk_pct + '% SSL最短剩余:' + s.ssl_min + '天';
+
+  document.getElementById('mAvatar').textContent = s.avatar;
+  document.getElementById('mAvatar').style.background = s.avatarBg;
+  document.getElementById('mAvatar').style.color = s.avatarColor;
+  document.getElementById('mTitle').textContent = s.name;
+  document.getElementById('mSub').textContent = s.ip + ' · ' + s.loc;
+
+  const b = s;
+  document.getElementById('mBody').innerHTML = `
+    <div class="m-section">
+      <div class="m-section-title">基础配置</div>
+      <div class="m-row"><span class="m-key">操作系统</span><span class="m-val ${b.os.includes('EOL')?'err':''}">${b.os}</span></div>
+      <div class="m-row"><span class="m-key">PHP 版本</span><span class="m-val ${b.php==='7.4'?'warn':''}">${b.php}</span></div>
+      <div class="m-row"><span class="m-key">Web 服务器</span><span class="m-val">${b.web}</span></div>
+      <div class="m-row"><span class="m-key">SSH 端口</span><span class="m-val">${b.ssh_port}</span></div>
+      <div class="m-row"><span class="m-key">在线时长</span><span class="m-val">${b.uptime}</span></div>
+      <div class="m-row"><span class="m-key">上次部署</span><span class="m-val">${b.deploy}</span></div>
+    </div>
+    <div class="m-section">
+      <div class="m-section-title">资源使用</div>
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill" style="width:${b.cpu_pct}%;background:${barColor(b.cpu_pct)}"></div></div><span class="bar-pct ${valClass(b.cpu_pct)}">${b.cpu_pct}%</span></div>
+      <div class="bar-row"><span class="bar-label">内存</span><div class="bar-track"><div class="bar-fill" style="width:${b.ram_pct}%;background:${barColor(b.ram_pct)}"></div></div><span class="bar-pct ${valClass(b.ram_pct)}">${b.ram_used}/${b.ram_total}</span></div>
+      <div class="bar-row"><span class="bar-label">磁盘</span><div class="bar-track"><div class="bar-fill" style="width:${b.disk_pct}%;background:${barColor(b.disk_pct)}"></div></div><span class="bar-pct ${valClass(b.disk_pct)}">${b.disk_used}/${b.disk_total}</span></div>
+      <div style="height:4px"></div>
+      <div class="m-section-title">域名 & SSL</div>
+      <div class="m-row"><span class="m-key">域名数量</span><span class="m-val">${b.domains} 个</span></div>
+      <div class="m-row"><span class="m-key">SSL 最短剩余</span><span class="m-val ${b.ssl_warn?'err':'ok'}">${b.ssl_min} 天</span></div>
+      <div class="m-row"><span class="m-key">SSL 状态</span><span class="m-val ${b.ssl_warn?'warn':'ok'}">${b.ssl_warn?'即将过期':'全部正常'}</span></div>
+      ${b.notes?`<div style="margin-top:4px;padding:7px 9px;background:#f8f6f2;border-radius:6px;font-size:10px;color:#5F5E5A;line-height:1.6">${b.notes}</div>`:''}
+    </div>
+  `;
+
+  const layer = document.getElementById('modalLayer');
+  layer.classList.add('open');
+  open = true;
+  setTimeout(() => layer.scrollIntoView({behavior:'smooth',block:'nearest'}), 50);
+}
+
+function closeModal() {
+  document.getElementById('modalLayer').classList.remove('open');
+  open = false;
+}
+</script>
