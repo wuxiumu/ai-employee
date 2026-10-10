@@ -1,0 +1,15 @@
+{
+  "name": "ai-employee/api",
+  "description": "AI员工办公室 - PHP API",
+  "version": "1.0.0",
+  "type": "project",
+  "require": {
+    "php": ">=7.4"
+  },
+  "scripts": {
+    "serve": "php -S localhost:8080 -t ."
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}
