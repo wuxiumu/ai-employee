@@ -33,6 +33,18 @@ cd api && php -S localhost:8080 -t .
 cd frontend/my-app && npm install && npm run dev
 ```
 
+
+## 环境变量
+
+复制 `.env.example` → `.env`（当前演示页可不配）。
+
+## 冒烟自检
+
+```bash
+bash scripts/smoke.sh
+```
+
+
 ## 定制合作（可报价）
 
 - 对接真实监控源（Prometheus / 自研心跳 / 云厂商 API）  
